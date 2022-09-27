@@ -18,6 +18,7 @@ import java.util.Collections;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Entity
+@Table(name="users")
 public class User implements UserDetails {
 
     @Id
@@ -34,6 +35,10 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
+
+    private Boolean locked;
+    private Boolean enabled;
+
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
@@ -46,9 +51,6 @@ public class User implements UserDetails {
         this.password = password;
         this.userRole = userRole;
     }
-
-//    public User(String username, String email, String password) {
-//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
