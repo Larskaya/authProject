@@ -1,11 +1,17 @@
 package org.data.auth.user;
 
+import ch.qos.logback.core.spi.LogbackLock;
 import lombok.AllArgsConstructor;
+import org.data.auth.registration.token.ConfirmationToken;
+import org.data.auth.registration.token.ConfirmationTokenService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -14,6 +20,7 @@ public class UserService implements UserDetailsService {
     private final static String USER_NOT_FOUND = "user with email %s not found";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -36,7 +43,16 @@ public class UserService implements UserDetailsService {
                 .encode(user.getPassword());
         user.setPassword(encodedPassword);
         userRepository.save(user);
-        // TODO: Send confirmation token
-        return "it works";
+
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+            token,
+            LocalDateTime.now(),
+            LocalDateTime.now().plusMinutes(15),
+            user
+        );
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        // TODO: send email
+        return token;
     }
 }

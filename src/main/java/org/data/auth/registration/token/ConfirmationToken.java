@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "tokens")
 public class ConfirmationToken {
 
     @Id
@@ -45,12 +47,12 @@ public class ConfirmationToken {
     public ConfirmationToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiresAt,
-                             LocalDateTime confirmedAt,
+//                             LocalDateTime confirmedAt,
                              User user) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.confirmedAt = confirmedAt;
+//        this.confirmedAt = confirmedAt;
         this.user = user;
     }
 }
